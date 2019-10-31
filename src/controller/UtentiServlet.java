@@ -1,6 +1,5 @@
 package controller;
 
-import dao.UtenteDAO;
 import dao.impl.UtenteDAOImpl;
 import model.bean.Utente;
 
@@ -13,28 +12,24 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/")
+@WebServlet(name = "UtentiServlet", urlPatterns = {"/UtentiServlet"})
 public class UtentiServlet extends HttpServlet {
-    private UtenteDAO utenteDAO;
+    private UtenteDAOImpl utenteDAO;
 
+    @Override
     public void init() {
         utenteDAO = new UtenteDAOImpl();
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        doGet(request, response);
-    }
-
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("prova");
         String action = request.getServletPath();
+
         List<Utente> utenti= utenteDAO.getAllUser();
-        utenti.forEach(s->System.out.println(s.toString()));
         request.setAttribute("ListaUtenti", utenti);
-        RequestDispatcher dispatcher = request.getRequestDispatcher("index.jsp");
-        dispatcher.forward(request, response);
+        request.getRequestDispatcher("lista.jsp").forward(request,response);
+        return;
     }
 
 }

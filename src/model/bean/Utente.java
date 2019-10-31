@@ -22,14 +22,22 @@ public class Utente {
     @Column(name = "Ruolo")
     private int ruolo;
 
+    @Column(name="Username")
+    private String username;
+
+    @Column(name = "Password")
+    private String password;
+
     public Utente() {
     }
 
-    public Utente(String nome, String cognome, String codiceFiscale, int ruolo) {
+    public Utente(String nome, String cognome, String codiceFiscale, int ruolo, String username, String password) {
         this.nome = nome;
         this.cognome = cognome;
         this.codiceFiscale = codiceFiscale;
         this.ruolo = ruolo;
+        this.username=username;
+        this.password=password;
     }
 
     public int getId() {
@@ -70,6 +78,22 @@ public class Utente {
 
     public void setRuolo(int ruolo) {
         this.ruolo = ruolo;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override
