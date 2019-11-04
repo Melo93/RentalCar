@@ -1,9 +1,8 @@
 package controller;
 
-import dao.impl.UtenteDAOImpl;
-import model.bean.Utente;
+import dao.impl.UtenteDAO;
+import model.Utente;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,11 +13,11 @@ import java.util.List;
 
 @WebServlet(name = "UtentiServlet", urlPatterns = {"/UtentiServlet"})
 public class UtentiServlet extends HttpServlet {
-    private UtenteDAOImpl utenteDAO;
+    private UtenteDAO utenteDAO;
 
     @Override
     public void init() {
-        utenteDAO = new UtenteDAOImpl();
+        utenteDAO = new UtenteDAO();
     }
 
     @Override
