@@ -25,11 +25,12 @@ public class UtenteDAO {
     }
 
     public Utente getUserByUsernameAndPassword(String username, String password) {
-        Utente utente = new Utente();
+        Utente utente;
         Transaction transaction = null;
         Session session=null;
         try {
             session = HibernateUtils.getHibernateSession();
+            transaction=session.beginTransaction();
             utente = session.createQuery(
                     "from Utente U where U.username=:username and U.password=:password",
                     Utente.class
@@ -51,7 +52,7 @@ public class UtenteDAO {
         return utente;
     }
 
-    public void save(Utente utente){
+    public void update(Utente utente){
 
         Transaction transaction=null;
         Session session=null;
@@ -78,4 +79,33 @@ public class UtenteDAO {
         HibernateUtils.shutdown();
 
     }
+
+    public boolean save(Utente utente){
+        Transaction transaction = null;
+        Session session=null;
+        try {
+            session=HibernateUtils.getHibernateSession();
+            transaction= session.beginTransaction();
+
+            session.save(utente);
+
+            transaction.commit();
+        }
+        catch (Exception e){
+            if(transaction!=null){
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        }
+        finally {
+            if(session!=null){
+                session.close();
+            }
+
+        }
+        HibernateUtils.shutdown();
+        return true;
+    }
+
 }

@@ -13,5 +13,8 @@ public class LogoutServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getSession().setAttribute("utente", null);
+        req.getSession().setAttribute("prenotazioniInAttesa", null);
+        req.getSession().setAttribute("veicoli", null);
+
     }
 }

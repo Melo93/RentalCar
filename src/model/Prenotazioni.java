@@ -1,40 +1,46 @@
 package model;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "prenotazioni")
 public class Prenotazioni {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
     private int id;
 
     @Column(name = "Data_inizio")
-    private Date dataInizio;
+    private LocalDate dataInizio;
 
     @Column(name = "Data_fine")
-    private Date dataFine;
+    private LocalDate dataFine;
 
     @Column(name = "Stato")
     private String stato;
 
-    @Column(name = "Utente")
-    private int idUtente;
+    @ManyToOne
+    @JoinColumn(name = "Utente", referencedColumnName= "ID")
+    private Utente utente;
 
-    @Column(name = "Veicolo")
-    private int idVeicolo;
+    @ManyToOne
+    @JoinColumn(name = "Veicolo", referencedColumnName= "ID")
+    private Veicoli veicolo;
+
+    @Column(name = "Data_prenotazione")
+    private LocalDate dataPrenotazione;
 
     public Prenotazioni() {
     }
 
-    public Prenotazioni(Date dataInizio, Date dataFine, String stato, int idUtente, int idVeicolo) {
+    public Prenotazioni(LocalDate dataInizio, LocalDate dataFine, String stato, Utente utente, Veicoli veicolo, LocalDate dataPrenotazione) {
         this.dataInizio = dataInizio;
         this.dataFine = dataFine;
         this.stato = stato;
-        this.idUtente = idUtente;
-        this.idVeicolo = idVeicolo;
+        this.utente = utente;
+        this.veicolo = veicolo;
+        this.dataPrenotazione=dataPrenotazione;
     }
 
     public int getId() {
@@ -45,19 +51,19 @@ public class Prenotazioni {
         this.id = id;
     }
 
-    public Date getDataInizio() {
+    public LocalDate getDataInizio() {
         return dataInizio;
     }
 
-    public void setDataInizio(Date dataInizio) {
+    public void setDataInizio(LocalDate dataInizio) {
         this.dataInizio = dataInizio;
     }
 
-    public Date getDataFine() {
+    public LocalDate getDataFine() {
         return dataFine;
     }
 
-    public void setDataFine(Date dataFine) {
+    public void setDataFine(LocalDate dataFine) {
         this.dataFine = dataFine;
     }
 
@@ -69,20 +75,40 @@ public class Prenotazioni {
         this.stato = stato;
     }
 
-    public int getIdUtente() {
-        return idUtente;
+    public Utente getUtente() {
+        return utente;
     }
 
-    public void setIdUtente(int idUtente) {
-        this.idUtente = idUtente;
+    public void setUtente(Utente idUtente) {
+        this.utente = idUtente;
     }
 
-    public int getIdVeicolo() {
-        return idVeicolo;
+    public Veicoli getVeicolo() {
+        return veicolo;
     }
 
-    public void setIdVeicolo(int idVeicolo) {
-        this.idVeicolo = idVeicolo;
+    public void setVeicolo(Veicoli idVeicolo) {
+        this.veicolo = idVeicolo;
+    }
+
+    public LocalDate getDataPrenotazione() {
+        return dataPrenotazione;
+    }
+
+    public void setDataPrenotazione(LocalDate dataPrenotazione) {
+        this.dataPrenotazione = dataPrenotazione;
+    }
+
+    @Override
+    public String toString() {
+        return "Prenotazioni{" +
+                "id=" + id +
+                ", dataInizio=" + dataInizio +
+                ", dataFine=" + dataFine +
+                ", stato='" + stato + '\'' +
+                ", idUtente=" + utente.toString() +
+                ", idVeicolo=" + veicolo +
+                '}';
     }
 }
 

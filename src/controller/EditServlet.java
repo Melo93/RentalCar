@@ -31,7 +31,6 @@ public class EditServlet extends HttpServlet {
         if (jsonString != null) {
             ObjectMapper mapper = new ObjectMapper();
             Utente jsonUtente = mapper.readValue(jsonString, Utente.class);
-            System.out.println(jsonUtente);
             HttpSession httpSession = request.getSession();
             Utente utente = (Utente)httpSession.getAttribute("utente");
             try {
@@ -39,11 +38,10 @@ public class EditServlet extends HttpServlet {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            System.out.println(utente);
-            utenteDAO.save(utente);
+            utenteDAO.update(utente);
             request.getSession().setAttribute("utente",utente);
             response.setStatus(HttpServletResponse.SC_OK);
-            response.sendRedirect("/index.jsp");
+            response.sendRedirect("index.jsp");
         }
 
         return;

@@ -1,16 +1,13 @@
 package model;
 
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import javax.persistence.*;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.Locale;
+import java.util.List;
+
 
 @Entity
 @Table(name = "utente")
@@ -26,13 +23,14 @@ public class Utente {
     @Column(name = "Cognome")
     private String cognome;
 
-    @Column(name = "Codice_Fiscale")
+    @Column(name = "Codice_Fiscale", unique = true)
     private String codiceFiscale;
 
-    @Column(name = "Ruolo")
-    private int ruolo;
+    @ManyToOne
+    @JoinColumn(name = "Ruolo", referencedColumnName = "ID")
+    private Ruolo ruolo;
 
-    @Column(name = "Username")
+    @Column(name = "Username", unique = true)
     private String username;
 
     @Column(name = "Password")
@@ -42,6 +40,9 @@ public class Utente {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate dataDiNascita;
+
+    @OneToMany(mappedBy = "utente", cascade = CascadeType.ALL)
+    private List<Prenotazioni> prenotazioni;
 
 
     public Utente() {
@@ -54,7 +55,7 @@ public class Utente {
         this.dataDiNascita = dataDiNascita;
     }
 
-    public Utente(String nome, String cognome, String codiceFiscale, int ruolo, String username, String password, LocalDate dataDiNascita) throws ParseException {
+    public Utente(String nome, String cognome, String codiceFiscale, Ruolo ruolo, String username, String password, LocalDate dataDiNascita) throws ParseException {
         this.nome = nome;
         this.cognome = cognome;
         this.codiceFiscale = codiceFiscale;
@@ -96,11 +97,11 @@ public class Utente {
         this.codiceFiscale = codiceFiscale;
     }
 
-    public int getRuolo() {
+    public Ruolo getRuolo() {
         return ruolo;
     }
 
-    public void setRuolo(int ruolo) {
+    public void setRuolo(Ruolo ruolo) {
         this.ruolo = ruolo;
     }
 
@@ -141,6 +142,14 @@ public class Utente {
         if (u.getDataDiNascita() != null) {
             this.setDataDiNascita(u.getDataDiNascita());
         }
+    }
+
+    public List<Prenotazioni> getPrenotazioni() {
+        return prenotazioni;
+    }
+
+    public void setPrenotazioni(List<Prenotazioni> prenotazioni) {
+        this.prenotazioni = prenotazioni;
     }
 
     @Override

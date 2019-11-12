@@ -1,8 +1,9 @@
-<%@page import="model.Utente" %>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <jsp:useBean id="usr" class="model.Utente" scope="request"/>
+<jsp:useBean id="car" class="model.Veicoli" scope="session"/>
+
 <!DOCTYPE html>
 <html>
 <html lang="en">
@@ -56,7 +57,7 @@
                 </div>
                 <div class="login-message">
                     <c:if test="${utente!=null}">
-                        Loggato come
+                        Logged as
                         <a href="profile.jsp">
                             <c:out value="${utente.nome}"></c:out>
                             <c:out value="${utente.cognome}"></c:out>
@@ -73,21 +74,19 @@
                   <span class="icon-menu h3 text-white"></span>
                 </a>
               </span>
-
-
                     <nav class="site-navigation text-right ml-auto d-none d-lg-block" role="navigation">
                         <ul class="site-menu main-menu js-clone-nav ml-auto ">
                             <li class="active"><a href="index.jsp" class="nav-link">Home</a></li>
-                            <li><a href="services.html" class="nav-link">Services</a></li>
+                            <li><a href="addCar.jsp" class="nav-link">Services</a></li>
                             <c:if test="${utente!=null}">
-                                <li><a href="cars.html" class="nav-link">Cars</a></li>
-                                <li><a href="blog.html" class="nav-link">Booking</a></li>
+                                <li><a href="cars.jsp" class="nav-link">Cars</a></li>
                             </c:if>
-                            <c:if test="${utente.ruolo==5}">
-                                <li><a href="contact.html" class="nav-link">New User</a></li>
+                            <c:if test="${utente.ruolo.descrizione=='Admin'}">
+                                <li><a href="newuser.jsp" class="nav-link">New User</a></li>
+                                <li><a href="addCar.jsp" class="nav-link">Add Car</a></li>
                             </c:if>
                             <c:if test="${utente!=null}">
-                            <li><a onclick="logout()" class="nav-link" style="cursor:pointer">Logout</a></li>
+                                <li><a onclick="logout()" class="nav-link" style="cursor:pointer">Logout</a></li>
                             </c:if>
                         </ul>
                     </nav>
@@ -101,8 +100,8 @@
         <div class="ftco-cover-1 overlay" style="background-image: url('images/hero_1.jpg')">
             <div class="container">
                 <div class="row align-items-center">
-                    <div class="col-lg-5">
-                        <c:if test="${utente==null}">
+                    <c:if test="${utente==null}">
+                        <div class="col-lg-5">
                             <div class="feature-car-rent-box-1">
                                 <h3>Login</h3>
                                 <ul class="list-unstyled">
@@ -124,160 +123,106 @@
                                     </button>
                                 </div>
                             </div>
+                        </div>
+                    </c:if>
+                    <c:if test="${utente.ruolo.descrizione=='Admin'}">
+                        <c:if test="${!prenotazioniInAttesa.isEmpty()}">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="feature-car-rent-box-1">
+                                        <label>Prenotazioni in attesa di conferma</label>
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">Nome</th>
+                                                <th scope="col">Cognome</th>
+                                                <th scope="col">Veicolo</th>
+                                                <th scope="col">Targa</th>
+                                                <th scope="col">Data prenotazione</th>
+                                                <th scope="col">Data inizio noleggio</th>
+                                                <th scope="col">Data fine noleggio</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <c:forEach items="${prenotazioniInAttesa}" var="book">
+                                                <tr>
+                                                    <th scope="row">${book.utente.nome}</th>
+                                                    <td>${book.utente.cognome}</td>
+                                                    <td>${book.veicolo.costruttore} ${book.veicolo.modello}</td>
+                                                    <td>${book.veicolo.targa}</td>
+                                                    <td>${book.dataPrenotazione}</td>
+                                                    <td>${book.dataInizio}</td>
+                                                    <td>${book.dataFine}</td>
+                                                    <td style="padding: 1rem;">
+                                                        <div class="row" style="padding: 0.5rem;">
+                                                            <div class="col-lg-">
+                                                                <form action="booking" method="get">
+                                                                    <input type="submit" value="Approve" name="state"
+                                                                           class="btn btn-primary" id="button1"/>
+                                                                    <input type="hidden" value="${book.id}"
+                                                                           name="bookId"/>
+                                                                </form>
+                                                            </div>
+                                                            <div class="col-lg-4">
+                                                                <form action="booking" method="get">
+                                                                    <input type="submit" value="Reject" name="state"
+                                                                           class="btn btn-danger" id="button2"/>
+                                                                    <input type="hidden" value="${book.id}"
+                                                                           name="bookId"/>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </c:forEach>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </c:if>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="site-section pt-0 pb-0 bg-light">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-
-                    <form class="trip-form">
-                        <div class="row align-items-center mb-4">
-                            <div class="col-md-6">
-                                <h3 class="m-0">Begin your trip here</h3>
-                            </div>
-                            <div class="col-md-6 text-md-right">
-                                <span class="text-primary">32</span> <span>cars available</span></span>
-                            </div>
-                        </div>
                         <div class="row">
-                            <div class="form-group col-md-3">
-                                <label for="cf-1">Where you from</label>
-                                <input type="text" id="cf-1" placeholder="Your pickup address" class="form-control">
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label for="cf-2">Where you go</label>
-                                <input type="text" id="cf-2" placeholder="Your drop-off address" class="form-control">
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label for="cf-3">Journey date</label>
-                                <input type="text" id="cf-3" placeholder="Your pickup address"
-                                       class="form-control datepicker px-3">
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label for="cf-4">Return date</label>
-                                <input type="text" id="cf-4" placeholder="Your pickup address"
-                                       class="form-control datepicker px-3">
+                            <div class="col-lg-12">
+                                <div class="feature-car-rent-box-1">
+                                    <label>Storico prenotazioni confermate</label>
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Nome</th>
+                                            <th scope="col">Cognome</th>
+                                            <th scope="col">Veicolo</th>
+                                            <th scope="col">Targa</th>
+                                            <th scope="col">Data prenotazione</th>
+                                            <th scope="col">Data inizio noleggio</th>
+                                            <th scope="col">Data fine noleggio</th>
+                                            <th scope="col">Stato</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <c:forEach items="${storicoPrenotazioni}" var="book">
+                                            <tr>
+                                                <th scope="row">${book.utente.nome}</th>
+                                                <td>${book.utente.cognome}</td>
+                                                <td>${book.veicolo.costruttore} ${book.veicolo.modello}</td>
+                                                <td>${book.veicolo.targa}</td>
+                                                <td>${book.dataPrenotazione}</td>
+                                                <td>${book.dataInizio}</td>
+                                                <td>${book.dataFine}</td>
+                                                <td>${book.stato}</td>
+                                            </tr>
+                                        </c:forEach>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <input type="submit" value="Submit" class="btn btn-primary">
-                            </div>
-                        </div>
-                    </form>
+                    </c:if>
                 </div>
             </div>
         </div>
     </div>
 
-
-    <div class="site-section bg-light">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3">
-                    <h3>Our Offer</h3>
-                    <p class="mb-4">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Iure nesciunt nemo vel
-                        earum maxime neque!</p>
-                    <p>
-                        <a href="#" class="btn btn-primary custom-prev">Previous</a>
-                        <span class="mx-2">/</span>
-                        <a href="#" class="btn btn-primary custom-next">Next</a>
-                    </p>
-                </div>
-                <div class="col-lg-9">
-
-
-                    <div class="nonloop-block-13 owl-carousel">
-                        <div class="item-1">
-                            <a href="#"><img src="images/img_1.jpg" alt="Image" class="img-fluid"></a>
-                            <div class="item-1-contents">
-                                <div class="text-center">
-                                    <h3><a href="#">Range Rover S64 Coupe</a></h3>
-                                    <div class="rating">
-                                        <span class="icon-star text-warning"></span>
-                                        <span class="icon-star text-warning"></span>
-                                        <span class="icon-star text-warning"></span>
-                                        <span class="icon-star text-warning"></span>
-                                        <span class="icon-star text-warning"></span>
-                                    </div>
-                                    <div class="rent-price"><span>$250/</span>day</div>
-                                </div>
-                                <ul class="specs">
-                                    <li>
-                                        <span>Doors</span>
-                                        <span class="spec">4</span>
-                                    </li>
-                                    <li>
-                                        <span>Seats</span>
-                                        <span class="spec">5</span>
-                                    </li>
-                                    <li>
-                                        <span>Transmission</span>
-                                        <span class="spec">Automatic</span>
-                                    </li>
-                                    <li>
-                                        <span>Minium age</span>
-                                        <span class="spec">18 years</span>
-                                    </li>
-                                </ul>
-                                <div class="d-flex action">
-                                    <a href="contact.html" class="btn btn-primary">Rent Now</a>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <div class="item-1">
-                            <a href="#"><img src="images/img_2.jpg" alt="Image" class="img-fluid"></a>
-                            <div class="item-1-contents">
-                                <div class="text-center">
-                                    <h3><a href="#">Range Rover S64 Coupe</a></h3>
-                                    <div class="rating">
-                                        <span class="icon-star text-warning"></span>
-                                        <span class="icon-star text-warning"></span>
-                                        <span class="icon-star text-warning"></span>
-                                        <span class="icon-star text-warning"></span>
-                                        <span class="icon-star text-warning"></span>
-                                    </div>
-                                    <div class="rent-price"><span>$250/</span>day</div>
-                                </div>
-                                <ul class="specs">
-                                    <li>
-                                        <span>Doors</span>
-                                        <span class="spec">4</span>
-                                    </li>
-                                    <li>
-                                        <span>Seats</span>
-                                        <span class="spec">5</span>
-                                    </li>
-                                    <li>
-                                        <span>Transmission</span>
-                                        <span class="spec">Automatic</span>
-                                    </li>
-                                    <li>
-                                        <span>Minium age</span>
-                                        <span class="spec">18 years</span>
-                                    </li>
-                                </ul>
-                                <div class="d-flex action">
-                                    <a href="contact.html" class="btn btn-primary">Rent Now</a>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="site-section section-3" style="background-image: url('images/hero_2.jpg');">
         <div class="container">

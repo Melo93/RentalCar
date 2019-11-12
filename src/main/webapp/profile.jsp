@@ -64,7 +64,7 @@
                 </div>
                 <div class="login-message">
                     <c:if test="${utente!=null}">
-                        Loggato come
+                        Logged as
                         <a href="profile.jsp">
                             <c:out value="${utente.nome}"></c:out>
                             <c:out value="${utente.cognome}"></c:out>
@@ -81,18 +81,20 @@
                   <span class="icon-menu h3 text-white"></span>
                 </a>
               </span>
-
-
                     <nav class="site-navigation text-right ml-auto d-none d-lg-block" role="navigation">
                         <ul class="site-menu main-menu js-clone-nav ml-auto ">
                             <li class="active"><a href="index.jsp" class="nav-link">Home</a></li>
-                            <li><a href="services.html" class="nav-link">Services</a></li>
-                            <li><a href="cars.html" class="nav-link">Cars</a></li>
-                            <li><a href="blog.html" class="nav-link">Booking</a></li>
-                            <c:if test="${utente.ruolo==5}">
-                                <li><a href="contact.html" class="nav-link">New User</a></li>
+                            <li><a href="addCar.jsp" class="nav-link">Services</a></li>
+                            <c:if test="${utente!=null}">
+                                <li><a href="cars.jsp" class="nav-link">Cars</a></li>
                             </c:if>
-                            <li><a onclick="logout()" class="nav-link" style="cursor:pointer">Logout</a></li>
+                            <c:if test="${utente.ruolo.descrizione=='Admin'}">
+                                <li><a href="newuser.jsp" class="nav-link">New User</a></li>
+                                <li><a href="addCar.jsp" class="nav-link">Add Car</a></li>
+                            </c:if>
+                            <c:if test="${utente!=null}">
+                                <li><a onclick="logout()" class="nav-link" style="cursor:pointer">Logout</a></li>
+                            </c:if>
                         </ul>
                     </nav>
                 </div>
@@ -106,7 +108,12 @@
             <div class="container">
                 <div class="row align-items-center">
                     <div class="col-lg-5">
-                        <div class="feature-car-rent-box-1">
+                        <div class="feature-car-rent-box-1"
+                             style="overflow-y:scroll;
+                                    min-width: 300px;
+                                    min-height: 200px;
+                                    max-width: 800px;
+                                    max-height: 600px;">
                             <h3>Edit Profile</h3>
                             <ul class="list-unstyled-editable">
                                 <li>
@@ -128,6 +135,10 @@
                                     <label>Data di nascita</label>
                                     <input  type="text" class="form-control" id="nascita" name="editable"
                                            placeholder="Nascita" value="${utente.dataDiNascita}">
+                                </li>
+
+                                <li>
+                                    <label>Tipo di account: <c:out value="${utente.ruolo.descrizione}"/></label>
                                 </li>
                             </ul>
                             <div id="edit-result"></div>
